@@ -78,6 +78,7 @@ class HTTPClient(object):
             else:
                 done = not part
         return str(buffer)
+
     def parse_url(self, url):
         params = url.split(':')
         host = ""
@@ -139,7 +140,6 @@ class HTTPClient(object):
             encoding = urllib.urlencode(args)
         else:
             encoding = ''
-
         message = "POST /" + path +  " HTTP/1.1\r\nHost: " + host + "\r\nAccept: */*\r\nContent-Length: " + str(len(encoding)) + "\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n" + encoding
 
         try:
