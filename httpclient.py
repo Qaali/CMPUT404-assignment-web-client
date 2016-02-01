@@ -33,31 +33,26 @@ class HTTPResponse(object):
         self.body = body
 
 class HTTPClient(object):
-    def get_host_port(self,url):
-        try:
-            remote_ip = socket.gethostbyname(url)
-            print 'Ip address of ' + url + ' is ' + remote_ip
-            return remote_ip
-
-        except socket.gaierror:
-            # Could not resolve IP
-            print 'Hostname could not be resolved... Exiting'
-            sys.exit() 
+   #def get_host_port(self,url):
 
     def connect(self, host, port):
-        # use sockets!
-        try:
-        # Create an AF_INET, STREAM socket (TCP)
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        except socket.error, msg:
-            print 'Failed to create socket. Error code: ' + str(msg[0]) + ' , Error message : ' + msg[1]
-            sys.exit()
-        print 'Socket Created'
-        # Connect to remote server
-        remote_ip = self.get_host_port(host)
-        s.connect((remote_ip, port))
-        print 'Socket Connected to ' + host + ' on ip ' + remote_ip
-        return s
+        if(port == None):
+	   port = 80
+	
+	# try to create socket
+	try:	
+		connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	except socket.error, msg:
+		print('Failed to create socket. ' +
+		'Error code: ' + str(msg[0]) + ' , Error message: ' + msg[1])
+
+	# try to connect to socket
+	try:
+		connection.connect((host,port))
+	except socket.error, msg:
+		print('Failed to connect. ' +
+		'Error code: ' + str(msg[0]) + ' , Error message: ' + msg[1])
+        return connection
 
     def get_code(self, data):
         # Identify HTTP Return Code
