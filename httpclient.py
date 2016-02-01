@@ -49,9 +49,9 @@ class HTTPClient(object):
                    ' , Error message : ' + msg[1]
             sys.exit();
             
-        s.connect((ip, port))
-           
+        s.connect((ip, port))   
         return s
+
      # extract code from response
     def get_code(self, data):
         response = data.split("\r\n\r\n", 1)
@@ -108,8 +108,6 @@ class HTTPClient(object):
             else:
                 host = host
                 path = ""
-       
-
         return host, path, port
 
     def GET(self, url, args=None):
