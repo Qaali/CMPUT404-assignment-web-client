@@ -36,41 +36,36 @@ class HTTPClient(object):
    #def get_host_port(self,url):
 
     def connect(self, host, port):
-        if(port == None):
-	   port = 80
-	
-	# try to create socket
-	try:	
-		connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	except socket.error, msg:
-		print('Failed to create socket. ' +
-		'Error code: ' + str(msg[0]) + ' , Error message: ' + msg[1])
-
-	# try to connect to socket
-	try:
-		connection.connect((host,port))
-	except socket.error, msg:
-		print('Failed to connect. ' +
-		'Error code: ' + str(msg[0]) + ' , Error message: ' + msg[1])
-        return connection
-
+        try:
+            ip = socket.gethostbyname(host)
+        except socket.gaierror:
+            #could not resolve hostname
+            print 'Hostname could not be resolved. Exiting'
+            sys.exit()
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error, msg:
+            print 'Failed to create socket. Error code: ' + str(msg[0]) +\
+                   ' , Error message : ' + msg[1]
+            sys.exit();
+            
+        s.connect((ip, port))
+           
+        return s
+     # extract code from response
     def get_code(self, data):
-        # Identify HTTP Return Code
-        index = data.find("\r\n")
-        fragment = data[:index]
-        fragment = fragment.split(" ")
-        code =  int(fragment[1])
+        response = data.split("\r\n\r\n", 1)
+	line = response[0].split("\r\n", 1)[0]
+	code = int(line.split(" ")[1])
         return code
+
+    # extract header from response 
     def get_headers(self,data):
-        # Parse HTTP Return Header
-        index = data.find("\r\n\r\n")
-        headers = data[0:index]
-        return headers
+        return data.split('\r\n\r\n')[0]
+
+    # extract body from response
     def get_body(self, data):
-        # Parse HTTP Return Content
-        index = data.find("\r\n\r\n")
-        body = data[index:]
-        return body
+        return data.split('\r\n\r\n')[1]
 
     # read everything from the socket
     def recvall(self, sock):
